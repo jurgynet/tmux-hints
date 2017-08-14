@@ -1,0 +1,78 @@
+# tmux != screen
+# A new window alias:
+#   alias nw='tmux new-window'
+# An sssh script:
+#   tmux new-window -n $1 cssh $*
+
+# Hotkey to all the bind commands below:  Ctrl-a
+set -g prefix C-a
+
+# Enter CopyMode for copy/paste: Ctrl-A [   (or y like I bind below)
+# Extend selection lines: V (up up up)
+# Copy Selection: Enter
+# Paste Selection: Ctrl-A ]  (like I mapped below)
+bind y copy-mode
+bind ] paste-buffer
+
+set-option -g mode-keys vi
+set-option -g automatic-rename off
+set-window-option -g automatic-rename off
+
+# https://superuser.com/questions/275836/convert-screen-hardstatus-to-tmux
+# status bar
+set-option -g status-utf8 on
+set-option -g status-justify left
+set-option -g status-bg default
+set-option -g status-fg white
+set-option -g message-attr none
+set-option -g message-bg white
+set-option -g message-fg black
+set-window-option -g window-status-bell-bg cyan
+set-window-option -g window-status-bell-attr bright
+set-window-option -g window-status-activity-bg red
+set-window-option -g window-status-activity-attr bright
+set-option -g status-interval 5
+set-option -g status-left-length 30
+#set-option -g status-left '#[fg=magenta]» #[fg=blue,bold]#T#[default]'
+set-option -g status-left  '#[fg=cyan][#S#[fg=black,bold]#P#[default]#[fg=cyan]]#[default]'
+set-option -g status-right "#[fg=red]#(battery Discharging)#[fg=blue]#(battery Charging) #[default]#[fg=$TMUX_SHELL_COLOR]#[default] #{?client_prefix,#[fg=red],#[fg=cyan]}%d %b %R"
+##set-option -g status-right "#[fg=red]#(battery Discharging)#[fg=blue]#(battery Charging) #[default]#[fg=$TMUX_SHELL_COLOR]#h#[default] #{?client_prefix,#[fg=red],#[fg=cyan]}%d %b %R"
+# Cheers Nei on freenode
+set-window-option -g window-status-current-format "[#[fg=white]#I:#W#F#[fg=red]]"
+set-option -g visual-activity on
+set-window-option -g monitor-activity off
+set-window-option -g window-status-current-fg red
+set-window-option -g window-status-current-attr bright
+
+# my bindings
+bind -n S-Right next-window
+bind -n S-Left previous-window
+bind -n S-Up new-window
+bind -n S-Down kill-window
+
+# borrowed bindings
+bind q     kill-pane
+bind r     command-prompt "rename-window '%%'"
+bind s     display-panes
+bind |     split-window -h
+bind -     split-window -v
+#bind C-a   send-prefix
+#bind C-c   copy-mode
+bind C-v   choose-buffer
+bind C-r   source-file ~/.tmux.conf; display "Reloaded!"
+bind C-s   choose-session
+
+# macros
+bind -n S-DC source-file ~/.tmuxmacro.delete
+bind -n S-IC source-file ~/.tmuxmacro.insert
+
+# contents of .tuxmacro.delete:
+# send-keys command C-m
+
+# bind notes from manpage:
+# tmux allows a command to be bound to most keys, with or without a prefix key.
+# When specifying keys, most represent themselves (for example ‘A’ to ‘Z’).  Ctrl
+# keys may be prefixed with ‘C-’ or ‘^’, and Alt (meta) with ‘M-’.  In addition,
+# the following special key names are accepted: Up, Down, Left, Right, BSpace,
+# BTab, DC (Delete), End, Enter, Escape, F1 to F12, Home, IC (Insert),
+# NPage/PageDown/PgDn, PPage/PageUp/PgUp, Space, and Tab.
